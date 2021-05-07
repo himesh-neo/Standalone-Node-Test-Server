@@ -29,7 +29,7 @@ async function startProgram() {
   const IP = rs.question('What is the IP of device? ');
   let isCorrect = isIp(IP);
   if (isCorrect) {
-    log(`You entered : ${green('IP')} ip.`)
+    log(`You entered : ${green(IP)} ip.`)
   } else {
     log(`${red('You entered incorrect IP')}: ${red(IP)}`)
     startProgram();
@@ -128,7 +128,7 @@ async function makeHttpPost(data, secret, path) {
     const data = await postData(path, {hexCmdString: hexCmdString})
     log("Success.", data.statusText);
   }
-  catch{
+  catch(err){
     log("Error: " , err);
   };
 }
