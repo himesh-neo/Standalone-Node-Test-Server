@@ -1,6 +1,6 @@
 # This is simple node application to test smart devices locally. 
 
-# Run below command to install npm pachages and dependancies.
+# Run below command to install npm packages and dependencies.
 npm install
 
 # Run below command to start the application for testing and follow the steps displaying on terminal.
