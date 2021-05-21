@@ -2,8 +2,6 @@ const rs = require("readline-sync")
 const chalk = require('chalk')
 const isIp = require('is-ip');
 const fetch = require('node-fetch');
-// const xxtea = require('./xxtea');
-// const { CRC8 } = require('./crc8');
 let log = console.log;
 
 let blueBright = chalk.bold.blueBright
@@ -36,7 +34,7 @@ async function startProgram() {
     startProgram();
   }
 
-  deviceTypes = ['VUL100', 'VSC100'] //, 'VUL200', 'VUL300'];
+  deviceTypes = ['VUL100', 'VSC100']
   const deviceTypesIndex = rs.keyInSelect(deviceTypes, 'Please select device type!');
   if (deviceTypesIndex == -1) {
     process.exit();
@@ -47,8 +45,7 @@ async function startProgram() {
 
   const deviceTypeCommands = {
     VUL100: ['on', 'off'],
-    VSC100: ['on', 'off', 'Color Temperature','Light Effect','Brightness'],
-    //VUL300: ['on', 'off', 'humidity', 'temperature']
+    VSC100: ['on', 'off', 'Color Temperature','Light Effect','Brightness']
   };
 
   commands = deviceTypeCommands[deviceTypes[deviceTypesIndex]];
@@ -65,16 +62,13 @@ async function startProgram() {
       if (cmdIndex == 'off') cmdIndex = 'on'
     } else {
       const cmdVal = rs.question(`Please provide value of ${cmdIndex} : `);
-      if (cmdIndex == 'Color Temperature' && (cmdVal < 2000 || cmdVal > 6500)) {
-        log(`${red('The range should be between 2000 to 6500, please enter correct value')}: ${red(cmdIndex)}`)
+      if (cmdIndex == 'Color Temperature' && (cmdVal < 1000 || cmdVal > 10000)) {
+        log(`${red('The range should be between 1000 to 10000, please enter correct value')}: ${red(cmdIndex)}`)
         startProgram();
       }
       log(`You entered : ${green(cmdVal)}.`)
       commandValue = cmdVal;
     }
-    // let cmdObj = {};
-    // cmdObj[`${cmdIndex}`] = commandValue
-    //let data = generateCommandBody(deviceType, cmdObj)
     switch (cmdIndex) {
       case 'on' || 'off':
         traitsCommand = 'action.devices.commands.OnOff'
@@ -82,101 +76,23 @@ async function startProgram() {
       case 'Color Temperature':
         traitsCommand = 'action.devices.commands.ColorAbsolute'
         break;
+      case 'Light Effect':
+        traitsCommand = 'action.devices.commands.ColorLoop'
+        break;
+      case 'Brightness':
+        traitsCommand = 'action.devices.commands.BrightnessAbsolute'
+        break;
       //default:
         //break;
     }
     const generateCommandString = new GenerateCommandString(deviceType, traitsCommand, commandValue);
     const data = generateCommandString.generateCommandBody()
-    log(" data : ", data);
+    //log(" data : ", data);
     const deviceCommand =
-        await makeSendCommand('HTTP', data, `http://localhost:80/uricommand/`);//`http://${IP}/uricommand`);//`http://localhost:80/uricommand/`);
+        await makeSendCommand('HTTP', data, `http://${IP}/uricommand`);//`http://localhost:80/uricommand/`);
   }
   confirmExit()
 }
-
-// function generateCommandBody(deviceType, command){
-//   log("command : ", command);
-//   let commandData = generateCommandArr(deviceType, command);
-//   return commandData;
-// }
-
-// function generateCommandArr(deviceType, desiredState) {
-//   let command_buf = new Uint8Array(11);
-//   log("deviceType -> ", deviceType);
-//   switch (deviceType) {
-//     case 'VUL100':
-//       // command
-//       command_buf[4] = 0x70;
-//       command_buf[5] = 0x00;
-//       command_buf[6] = 0x00;
-//       command_buf[7] = 0x00;
-//       // data length
-//       command_buf[8] = 0x00;
-//       command_buf[9] = 0x01;
-//       // param
-//       command_buf[10] = Object.keys(desiredState)[0] == 'on' && desiredState.on == true ? 0x01 : 0x00 ;
-//       break;
-//     case 'VSC100':
-//       if (Object.keys(desiredState)[0] == 'Color Temperature') {
-//         log("INSIDE VSC100  Color Temperature -> ", deviceType);
-//         // command
-//         command_buf[4] = 0x70;
-//         command_buf[5] = 0x00;
-//         command_buf[6] = 0x20;
-//         command_buf[7] = 0x02;
-//         // param
-//         command_buf[10] = 0xFF;
-//         command_buf[11] = 0x00;
-//         command_buf[12] = 0x00;
-//         command_buf[13] = 0x00;
-//         command_buf[14] = 0xFF;
-//       } else {
-//         // command
-//         command_buf[4] = 0x70;
-//         command_buf[5] = 0x00;
-//         command_buf[6] = 0x20;
-//         command_buf[7] = 0x03;
-//         // param
-//         command_buf[10] = Object.keys(desiredState)[0] == 'on' && desiredState.on == true ? 0x01 : 0x00 ;
-//       }
-      
-//       // data length
-//       command_buf[8] = 0x00;
-//       command_buf[9] = 0x05;
-      
-//       break;
-//     default:
-//       throw Error(`Unsupported device : ${deviceType}`);
-//   }
-
-//   // seq no
-//   command_buf[0] = 0x00;
-//   command_buf[1] = 0x00;
-//   // magicNo
-//   command_buf[2] = 0x56;
-//   command_buf[3] = 0x74;
-
-//   log('command_buf : ', command_buf);
-//   let cksum = generateChecksum(command_buf)
-//   log('cksum - ', cksum) 
-//   let cmd = new Uint8Array([...command_buf, cksum])
-//   log('unint array with cksum - ', cmd) 
-//   return cmd
-// }
-
-// function generateChecksum(data){
-//   let crc8 = new CRC8(CRC8.POLY.CRC8_DALLAS_MAXIM, 0xff)
-//   let cksum = crc8.checksum(data);
-//   return cksum
-// }
-
-// function toHexString(data) {
-//   var s = '' // '0x';
-//   data.forEach(function(byte) {
-//       s += ('0' + (byte & 0xFF).toString(16)).slice(-2);
-//   });
-//   return s;
-// }
 
 async function postData(url = '', data = {}) {
   const response = await fetch(url, {
@@ -189,12 +105,6 @@ async function postData(url = '', data = {}) {
   return response;
 }
 async function makeHttpPost(data, path) {
-  //log('http encryption secret', secret)
-  
-  // let encryptedData = xxtea.encrypt(data, secret);
-  // //log('1 encrypted data - ', encryptedData)
-  // let hexCmdString = toHexString(encryptedData)
-  // //log('1 hexCmdString data - ', hexCmdString)
   try{
     const response = await postData(path, {hexCmdString: data})
     log("Success.", response.statusText);
