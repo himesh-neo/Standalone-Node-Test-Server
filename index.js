@@ -60,7 +60,7 @@ async function startProgram() {
     if (cmdIndex == 'on' || cmdIndex == 'off') {
       commandValue = cmdIndex == 'on' ? true: false
       if (cmdIndex == 'off') cmdIndex = 'on'
-    } else {
+    } else if (cmdIndex == 'Color Temperature') {
       const cmdVal = rs.question(`Please provide value of ${cmdIndex} : `);
       if (cmdIndex == 'Color Temperature' && (cmdVal < 1000 || cmdVal > 10000)) {
         log(`${red('The range should be between 1000 to 10000, please enter correct value')}: ${red(cmdIndex)}`)
@@ -68,6 +68,16 @@ async function startProgram() {
       }
       log(`You entered : ${green(cmdVal)}.`)
       commandValue = cmdVal;
+    } else if (cmdIndex == 'Light Effect'){
+      commandValue = 0x01;
+    } else if (cmdIndex == 'Brightness'){
+      const cmdBVal = rs.question(`Please provide value of ${cmdIndex} : `);
+      if (cmdBVal < 0 || cmdBVal > 100) {
+        log(`${red('The range should be between 0 to 100, please enter correct value')}: ${red(cmdIndex)}`)
+        startProgram();
+      }
+      log(`You entered : ${green(cmdBVal)}.`)
+      commandValue = cmdBVal;
     }
     switch (cmdIndex) {
       case 'on' || 'off':

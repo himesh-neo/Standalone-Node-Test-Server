@@ -82,23 +82,24 @@ class GenerateCommandString {
               command_buf[4] = 0x70;
               command_buf[5] = 0x00;
               command_buf[6] = 0x20;
-              command_buf[7] = 0x03;
+              command_buf[7] = 0x01;
               // data length
               command_buf[8] = 0x00;
               command_buf[9] = 0x01;
               // param
-              command_buf[10] = commandValue == true ? 0x01 : 0x00;
+              command_buf[10] = 0x01;
             } else if (command == 'action.devices.commands.BrightnessAbsolute') {
+              const numberToHex = this.toHex(commandValue);
               // command
               command_buf[4] = 0x70;
               command_buf[5] = 0x00;
               command_buf[6] = 0x20;
-              command_buf[7] = 0x03;
+              command_buf[7] = 0x0A;
               // data length
               command_buf[8] = 0x00;
               command_buf[9] = 0x01;
               // param
-              command_buf[10] = commandValue == true ? 0x01 : 0x00;
+              command_buf[10] = numberToHex;
             }
             break;
           default:
@@ -148,5 +149,8 @@ class GenerateCommandString {
     const hex = Math.round(x).toString(16).toUpperCase();
     return hex.length === 1 ? '0x0' + hex : '0x' + hex
   })
+  toHex = (d) => {
+    return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+  }
 }
 module.exports = GenerateCommandString
