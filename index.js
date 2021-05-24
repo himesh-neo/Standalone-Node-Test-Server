@@ -10,7 +10,7 @@ let red = chalk.bold.red
 let cyan = chalk.bold.cyan
 let yellow = chalk.bold.yellow
 let title = chalk.black.bold.bgYellow
-const GenerateCommandString = require('./generateCommand');
+const GenerateCommandString = require('generateDeviceCommand');
 
 begin()
 
@@ -99,7 +99,7 @@ async function startProgram() {
     const data = generateCommandString.generateCommandBody()
     //log(" data : ", data);
     const deviceCommand =
-        await makeSendCommand('HTTP', data, `http://${IP}/uricommand`);//`http://localhost:80/uricommand/`);
+    await makeSendCommand('HTTP', data, `http://${IP}/uricommand`);//`http://localhost:80/uricommand/`);
   }
   confirmExit()
 }
