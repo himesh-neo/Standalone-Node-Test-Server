@@ -1,7 +1,7 @@
 const rs = require("readline-sync")
 const chalk = require('chalk')
 const isIp = require('is-ip');
-const fetch = require('node-fetch');
+const fetchNode = require('node-fetch');
 let log = console.log;
 
 let blueBright = chalk.bold.blueBright
@@ -10,7 +10,7 @@ let red = chalk.bold.red
 let cyan = chalk.bold.cyan
 let yellow = chalk.bold.yellow
 let title = chalk.black.bold.bgYellow
-const GenerateCommandString = require('generateDeviceCommand');
+const GenerateCommandString = require('generateDeviceCommand').GenerateCommandString;
 
 begin()
 
@@ -34,7 +34,7 @@ async function startProgram() {
     startProgram();
   }
 
-  deviceTypes = ['VUL100', 'VSC100']
+  let deviceTypes = ['VUL100', 'VSC100']
   const deviceTypesIndex = rs.keyInSelect(deviceTypes, 'Please select device type!');
   if (deviceTypesIndex == -1) {
     process.exit();
@@ -43,12 +43,12 @@ async function startProgram() {
     log(`You selected device type : ${green(deviceType)}`)
   }
 
-  const deviceTypeCommands = {
+  const deviceTypeCommands: any = {
     VUL100: ['on', 'off'],
     VSC100: ['on', 'off', 'Color Temperature','Light Effect','Brightness']
   };
 
-  commands = deviceTypeCommands[deviceTypes[deviceTypesIndex]];
+  let commands = deviceTypeCommands[deviceTypes[deviceTypesIndex]];
   const commandsIndex = rs.keyInSelect(commands, 'What command do you want to send?');
   if (commandsIndex == -1) {
     process.exit();
@@ -104,8 +104,8 @@ async function startProgram() {
   confirmExit()
 }
 
-async function postData(url = '', data = {}) {
-  const response = await fetch(url, {
+async function postData(url = '', data: any = {}) {
+  const response = await fetchNode(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/octet-stream'
@@ -114,7 +114,7 @@ async function postData(url = '', data = {}) {
   });
   return response;
 }
-async function makeHttpPost(data, path) {
+async function makeHttpPost(data: any, path: any) {
   try{
     const response = await postData(path, {hexCmdString: data})
     log("Success.", response.statusText);
@@ -124,7 +124,7 @@ async function makeHttpPost(data, path) {
   };
 }
 
-function makeSendCommand(protocol, data, path) {
+function makeSendCommand(protocol: any, data: any, path: any) {
   switch (protocol) {
     case 'HTTP':
       return makeHttpPost(data, path);
@@ -133,7 +133,7 @@ function makeSendCommand(protocol, data, path) {
   }
 }
 // asks a question to the user and returns true or false
-function askQuestion(ques, correctAnswer) {
+function askQuestion(ques: any, correctAnswer: any) {
   if (rs.keyInYNStrict(yellow(ques))) {
     return checkAnswer("y", correctAnswer)
   } else {
@@ -142,7 +142,7 @@ function askQuestion(ques, correctAnswer) {
 }
 
 // compares user's answer with correct answer and returns true or false back to askQuestion()
-function checkAnswer(ans, correctAnswer) {
+function checkAnswer(ans: any, correctAnswer: any) {
   if (ans.toLowerCase() === correctAnswer.toLowerCase()) {
     return true
   } else {
