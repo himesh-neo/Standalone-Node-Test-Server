@@ -34,7 +34,7 @@ async function startProgram() {
     startProgram();
   }
 
-  let deviceTypes = ['VUL100', 'VSC100', 'VLS']
+  let deviceTypes = ['VUL100', 'VSC100', 'VLS100']
   const deviceTypesIndex = rs.keyInSelect(deviceTypes, 'Please select device type!');
   if (deviceTypesIndex == -1) {
     process.exit();
@@ -46,7 +46,7 @@ async function startProgram() {
   const deviceTypeCommands: any = {
     VUL100: ['on', 'off'],
     VSC100: ['on', 'off', 'Color Temperature','Light Effect','Brightness'],
-    VLS: ['on', 'off']
+    VLS100: ['on', 'off']
   };
 
   let commands = deviceTypeCommands[deviceTypes[deviceTypesIndex]];
